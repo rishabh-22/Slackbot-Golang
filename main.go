@@ -44,22 +44,21 @@ func handleMessage(rtm *slack.RTM, ev *slack.MessageEvent) {
 
 	var (
 		topEntity    wit.MessageEntity
-		topEntityKey string
 	)
 
-	for key, entityList := range result.Entities {
+	for _, entityList := range result.Entities {
 		for _, entity := range entityList {
 			if entity.Confidence > confidenceThreshold && entity.Confidence > topEntity.Confidence {
 				topEntity = entity
-				topEntityKey = key
+
 			}
 		}
 	}
 
-	replyToUser(rtm, ev, topEntity, topEntityKey)
+	replyToUser(rtm, ev, topEntity)
 }
 
-func replyToUser(rtm *slack.RTM, ev *slack.MessageEvent, topEntity wit.MessageEntity, topEntityKey string) {
+func replyToUser(rtm *slack.RTM, ev *slack.MessageEvent, topEntity wit.MessageEntity) {
 	switch topEntity.Value {
 	case "greeting":
 		rtm.SendMessage(rtm.NewOutgoingMessage("Yo what up!?", ev.Channel))
